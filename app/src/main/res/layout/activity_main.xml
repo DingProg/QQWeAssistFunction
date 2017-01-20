@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f3f3f3"
+    tools:context="ding.in.wechataccessibilty.MainActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/btnChatAccess"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_margin="15dp"
+                android:background="@drawable/btn_shape_color2"
+                android:text="开启插件"
+                android:textColor="#fff"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/addPluginsKeyWord"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_below="@id/btnChatAccess"
+                android:layout_margin="15dp"
+                android:layout_marginTop="0dp"
+                android:background="@drawable/btn_shape"
+                android:text="添加插件需要自动聊天的群名称"
+                android:textColor="#fff"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/addRedPluginsKeyWord"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_below="@id/addPluginsKeyWord"
+                android:layout_margin="15dp"
+                android:layout_marginTop="0dp"
+                android:background="@drawable/btn_shape_color1"
+                android:text="添加插件需要屏蔽红包的名称"
+                android:textColor="#fff"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/tvTip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/addRedPluginsKeyWord"
+                android:padding="15dp"
+                android:text="@string/help" />
+        </RelativeLayout>
+
+    </ScrollView>
+</RelativeLayout>

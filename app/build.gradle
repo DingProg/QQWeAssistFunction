@@ -1,0 +1,41 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+    defaultConfig {
+        applicationId "ding.in.wechataccessibilty"
+        minSdkVersion 18
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+    }
+    signingConfigs {
+        release {
+            keyAlias '签名文件'
+            keyPassword '123456'
+            storeFile file('../keystore/dingkeyfile.jks')
+            storePassword '123456'
+            v2SigningEnabled false
+        }
+        debug {}
+    }
+
+    buildTypes {
+        release {
+            shrinkResources false
+            zipAlignEnabled true
+            signingConfig signingConfigs.release
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug{
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+dependencies {
+    compile 'com.squareup.okio:okio:1.11.0'
+    compile 'com.squareup.okhttp3:okhttp:3.5.0'
+}

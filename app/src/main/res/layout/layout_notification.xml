@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/btnWeRed"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:textColor="#fff"
+        android:background="@drawable/btn_shape_color1"
+        android:text="关闭红包"/>
+
+    <Button
+        android:id="@+id/btnWeChat"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:textColor="#fff"
+        android:background="@drawable/btn_shape_color1"
+        android:text="关闭微信自动聊天"/>
+
+    <Button
+        android:id="@+id/btnQQChat"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:textColor="#fff"
+        android:background="@drawable/btn_shape_color1"
+        android:text="关闭QQ自动聊天"/>
+
+    <ImageView
+        android:id="@+id/btnClose"
+        android:layout_width="wrap_content"
+        android:src="@drawable/notify_close"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>
