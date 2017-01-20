@@ -51,18 +51,18 @@ public class QQWalletAccessibility {
                     }
                 }
             default:
-                //提高抢红包的准确度
-                String className = event.getClassName().toString();
-                //if(!hasAction) {
-                //getLastPacket();
-                //}
-                if (className.equals("cooperation.qwallet.plugin.QWalletPluginProxyActivity")) {
-                    //已经存入余额
-                    back();
-                } else {
-                    getLastPacket();
-                }
                 break;
+        }
+        //提高抢红包的准确度
+        String className = event.getClassName().toString();
+        //if(!hasAction) {
+        //getLastPacket();
+        //}
+        if (className.equals("cooperation.qwallet.plugin.QWalletPluginProxyActivity")) {
+            //已经存入余额
+            back();
+        } else {
+            getLastPacket();
         }
     }
 

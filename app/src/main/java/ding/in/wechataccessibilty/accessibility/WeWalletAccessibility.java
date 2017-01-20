@@ -52,23 +52,23 @@ public class WeWalletAccessibility {
                 }
                 break;
             default:
-                //提高抢红包的准确度
-                String className = event.getClassName().toString();
+                break;
+        }
+        //提高抢红包的准确度
+        String className = event.getClassName().toString();
 //        if (className.equals("com.tencent.mm.ui.LauncherUI") || eventType == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) {
 //            // getLastPacket();
 //        }
-                if (className.equals("com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyReceiveUI")) {
-                    //开红包
-                    LogUtils.i("com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyReceiveUI 打开");
-                    openButtonWithClick();
-                } else if (className.equals("com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyDetailUI")) {
-                    //退出红包
-                    LogUtils.i("com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyDetailUI 退出");
-                    pressBackButton();
-                } else {
-                    getLastPacket();
-                }
-                break;
+        if (className.equals("com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyReceiveUI")) {
+            //开红包
+            LogUtils.i("com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyReceiveUI 打开");
+            openButtonWithClick();
+        } else if (className.equals("com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyDetailUI")) {
+            //退出红包
+            LogUtils.i("com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyDetailUI 退出");
+            pressBackButton();
+        } else {
+            getLastPacket();
         }
 
     }
@@ -118,10 +118,11 @@ public class WeWalletAccessibility {
             for (int i = parents.size() - 1; i >= 0; i--) {
                 AccessibilityNodeInfo accessibilityNodeInfo = parents.get(i);
                 String str = getWechatStr(accessibilityNodeInfo);
-                if (!havedGetReadWallet.contains(str) || !havedGetReadWallet.contains("TAG_DING" + inofToString(accessibilityNodeInfo))) {
-                    accessibilityNodeInfo.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                if (!havedGetReadWallet.contains(str)
+                        || !havedGetReadWallet.contains(inofToString(accessibilityNodeInfo))) {
+                    //str = 恭喜发财，大吉大利！领取红包微信红包  这个需要在商量
                     havedGetReadWallet.add(str);
-                    havedGetReadWallet.add("TAG_DING" + inofToString(accessibilityNodeInfo));
+                    havedGetReadWallet.add(inofToString(accessibilityNodeInfo));
 
                     LogUtils.i("点击红包");
 
@@ -130,6 +131,7 @@ public class WeWalletAccessibility {
                         //havedGetReadWallet.clear();
                         clearAccessInfo();
                     }
+                    accessibilityNodeInfo.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                     return;
                 }
             }
@@ -224,17 +226,20 @@ public class WeWalletAccessibility {
     private void openButtonWithClick() {
         AccessibilityNodeInfo rootInActiveWindow = baseAccessibilityService.getRootInActiveWindow();
         if (rootInActiveWindow == null) return;
-        boolean hasNodes = hasOneOfThoseNodes(rootInActiveWindow,
-                WECHAT_BETTER_LUCK_CH, WECHAT_EXPIRES_CH, WECHAT_DETAILS_CH);
-        if (hasNodes) {
-            LogUtils.i("执行退出");
-            pressBackButton();
-        }
+//        boolean hasNodes = hasOneOfThoseNodes(rootInActiveWindow,
+//                WECHAT_BETTER_LUCK_CH, WECHAT_EXPIRES_CH, WECHAT_DETAILS_CH);
+//        if (hasNodes) {
+//            LogUtils.i("执行退出");
+//            pressBackButton();
+//        }
 
         AccessibilityNodeInfo openButton = findOpenButton(rootInActiveWindow);
         if (openButton != null && "android.widget.Button".equals(openButton.getClassName().toString())) {
             performViewClick(openButton);
             LogUtils.i("点击打开红包的开");
+        }else{
+            LogUtils.i("执行退出");
+            pressBackButton();
         }
     }
 

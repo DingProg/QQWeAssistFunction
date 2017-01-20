@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/WeChatAccessibilty.iml" filepath="$PROJECT_DIR$/WeChatAccessibilty.iml" />
+      <module fileurl="file://$PROJECT_DIR$/QQWeAssistFunction.iml" filepath="$PROJECT_DIR$/QQWeAssistFunction.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
