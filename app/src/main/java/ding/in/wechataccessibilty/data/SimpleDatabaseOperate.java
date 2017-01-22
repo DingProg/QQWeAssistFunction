@@ -26,7 +26,6 @@ public class SimpleDatabaseOperate {
 
     public static void  query(SQLiteDatabase db,List<ItemEntity> list) {
         Cursor cursor = db.query ("usertable",new String[]{"_id","keyword"},null,null,null,null,null);
-        int columnCount = cursor.getColumnCount();
         if(cursor.moveToFirst()){
             while(cursor != null && cursor.moveToNext()){
                 //获得ID
@@ -50,7 +49,6 @@ public class SimpleDatabaseOperate {
 
     public static void  queryRed(SQLiteDatabase db,List<ItemEntity> list) {
         Cursor cursor = db.query ("usertablered",new String[]{"_id","keyword"},null,null,null,null,null);
-        int columnCount = cursor.getColumnCount();
         if(cursor.moveToFirst()){
             while(cursor != null && cursor.moveToNext()){
                 //获得ID

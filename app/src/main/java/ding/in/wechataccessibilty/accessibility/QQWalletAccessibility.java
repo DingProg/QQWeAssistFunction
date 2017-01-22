@@ -234,26 +234,6 @@ public class QQWalletAccessibility {
         }
     }
 
-
-    private static final String WECHAT_DETAILS_EN = "Details";
-    private static final String WECHAT_DETAILS_CH = "红包详情";
-    private static final String WECHAT_BETTER_LUCK_EN = "Better luck next time!";
-    private static final String WECHAT_BETTER_LUCK_CH = "手慢了";
-    private static final String WECHAT_EXPIRES_CH = "已超过24小时";
-
-    /**
-     * 判断红包是否已经被领取
-     */
-    private boolean hasOneOfThoseNodes(AccessibilityNodeInfo rootInActiveWindow, String... texts) {
-        List<AccessibilityNodeInfo> nodes;
-        for (String text : texts) {
-            if (text == null) continue;
-            nodes = rootInActiveWindow.findAccessibilityNodeInfosByText(text);
-            if (nodes != null && !nodes.isEmpty()) return true;
-        }
-        return false;
-    }
-
     private void performClick(AccessibilityNodeInfo accessibilityNodeInfo) {
         if (accessibilityNodeInfo == null) return;
         if (accessibilityNodeInfo.isClickable()) {
