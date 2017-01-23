@@ -15,7 +15,7 @@ import ding.in.wechataccessibilty.utils.NetCheckUtils;
  */
 public class DingAccessibilityService extends AccessibilityService {
     //抢红包
-    private WeWalletAccessibility weWalletAccessibility;
+    private QuickAndDeleteWeWalletAccessibility weWalletAccessibility;
     private QQWalletAccessibility qqWalletAccessibility;
 
     //自动聊天
@@ -25,7 +25,7 @@ public class DingAccessibilityService extends AccessibilityService {
 
     protected void onServiceConnected() {
         LogUtils.i("----------------------onServiceConnected--------------------------");
-        weWalletAccessibility = new WeWalletAccessibility(this);
+        weWalletAccessibility = new QuickAndDeleteWeWalletAccessibility(this);
         qqWalletAccessibility = new QQWalletAccessibility(this);
 
         qqChatAccessibility = new QQChatAccessibility(this);

@@ -19,7 +19,7 @@ import ding.in.wechataccessibilty.utils.LogUtils;
 import static android.accessibilityservice.AccessibilityService.GLOBAL_ACTION_BACK;
 
 /**
- * Description：
+ * Description：版本1
  *
  * @author dingdegao
  *         create by 2016/1/17.
