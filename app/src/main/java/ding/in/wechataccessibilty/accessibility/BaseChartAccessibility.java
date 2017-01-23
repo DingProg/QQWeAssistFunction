@@ -28,7 +28,7 @@ import ding.in.wechataccessibilty.utils.OkHttpChartUtils;
  *         create by 2016/11/30.
  */
 public abstract class BaseChartAccessibility {
-    boolean statue = false;
+   // boolean statue = false;
     public static final int WAT_CHAT = 1;
     public static final int WAT_QQ = 2;
 
@@ -79,7 +79,6 @@ public abstract class BaseChartAccessibility {
                 if (tempMsg.equals(msgStr)) {
                     LogUtils.i("聊发送内容相同返回:" + msgStr);
                     begin = false;
-                    statue = false;
                     return;
                 }
                 tempMsg = msgStr;
@@ -96,7 +95,6 @@ public abstract class BaseChartAccessibility {
         String replayMsg = "";
         try {
             if (TextUtils.isEmpty(replayJson)) {
-                statue = false;
                 return;
             } else {
                 JSONObject jsonObject = new JSONObject(replayJson);
@@ -104,7 +102,6 @@ public abstract class BaseChartAccessibility {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            statue = false;
             return;
         }
         if (replayMsg.contains("图灵机器人") || replayMsg.contains("Turingrobot")) {

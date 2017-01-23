@@ -32,9 +32,7 @@ public class QQChatAccessibility extends BaseChartAccessibility {
         int eventType = event.getEventType();
         if (event.TYPE_WINDOW_CONTENT_CHANGED == eventType
                 || event.TYPE_WINDOW_STATE_CHANGED == eventType) {
-            if (!statue) {
-                findText();
-            }
+            findText();
         }
     }
 
@@ -52,7 +50,6 @@ public class QQChatAccessibility extends BaseChartAccessibility {
 //        }else {
 //            return;
 //        }
-        statue = true;
         List<AccessibilityNodeInfo> accessibilityNodeInfosByViewId = rootInActiveWindow.findAccessibilityNodeInfosByViewId("com.tencent.mobileqq:id/chat_item_content_layout");
         if (accessibilityNodeInfosByViewId == null) return;
 
@@ -110,7 +107,6 @@ public class QQChatAccessibility extends BaseChartAccessibility {
                 AccessibilityNodeInfo btn = btnList.get(btnList.size() - 1);
                 performClick(btn);
                 listMsg.add(mSourceMsg);
-                statue = false;
             } catch (Exception e) {
 
             }

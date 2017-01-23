@@ -29,9 +29,7 @@ public class WeChatAccessibilty extends BaseChartAccessibility {
         int eventType = accessibilityEvent.getEventType();
         if (accessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED == eventType
                 || accessibilityEvent.TYPE_WINDOW_STATE_CHANGED == eventType) {
-            if (!statue) {
-                findText();
-            }
+            findText();
         }
     }
 
@@ -83,8 +81,6 @@ public class WeChatAccessibilty extends BaseChartAccessibility {
 
     @Override
     public void sendMsg(AccessibilityNodeInfo accessibilityNodeInfo) {
-        if (statue) return;
-        statue = true;
         String sourceMsg = accessibilityNodeInfo.getText().toString();
         LogUtils.i("找到聊天内容:" + sourceMsg);
         mSourceMsg = sourceMsg;
@@ -94,7 +90,6 @@ public class WeChatAccessibilty extends BaseChartAccessibility {
             if (sourceMsg.length() > 600) return;
             if (listMsg.contains(sourceMsg)) {
                 LogUtils.i("没有新的聊天内容，直接返回");
-                statue = false;
                 return;
             }
         }
@@ -161,7 +156,6 @@ public class WeChatAccessibilty extends BaseChartAccessibility {
                 findEditText(rootInActiveWindow, replayMsg);
                 send();
                 listMsg.add(mSourceMsg);
-                statue = false;
             } catch (Exception e) {
 
             }

@@ -62,7 +62,9 @@ public class QQWalletAccessibility {
             //已经存入余额
             back();
         } else {
-            getLastPacket();
+            if(!hasAction) {
+                getLastPacket();
+            }
         }
     }
 
@@ -138,17 +140,20 @@ public class QQWalletAccessibility {
     private void getLastPacket() {
         hasAction = true;
         AccessibilityNodeInfo rootNode = baseAccessibilityService.getRootInActiveWindow();
-        if (rootNode == null) return;
+        if (rootNode == null) {
+            hasAction = false;
+            return;
+        }
         parents.clear();
         recycle(rootNode);
         if (parents.size() > 0) {
             for (int i = parents.size() - 1; i >= 0; i--) {
                 AccessibilityNodeInfo accessibilityNodeInfo = parents.get(i);
                 String redMsg = getQQchatStr(accessibilityNodeInfo);
-                if (!havedGetReadWallet.contains(redMsg) || !havedGetReadWallet.contains("TAG_DING"+inofToString(accessibilityNodeInfo))) {
+                if (!havedGetReadWallet.contains(redMsg) || !havedGetReadWallet.contains("TAG_DING" + inofToString(accessibilityNodeInfo))) {
                     accessibilityNodeInfo.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                     havedGetReadWallet.add(redMsg);
-                    havedGetReadWallet.add("TAG_DING"+inofToString(accessibilityNodeInfo));
+                    havedGetReadWallet.add("TAG_DING" + inofToString(accessibilityNodeInfo));
 
                     //抢30/2次红包清空一下
                     if (havedGetReadWallet.size() > 30) {
@@ -162,22 +167,22 @@ public class QQWalletAccessibility {
         hasAction = false;
     }
 
-    private String inofToString(AccessibilityNodeInfo accessibilityNodeInfo){
+    private String inofToString(AccessibilityNodeInfo accessibilityNodeInfo) {
         return accessibilityNodeInfo.getClass().getName() + "@" + Integer.toHexString(accessibilityNodeInfo.hashCode());
     }
 
     private void clearAccessInfo() {
-        List<String> list=new ArrayList<>();
+        List<String> list = new ArrayList<>();
         for (String s : havedGetReadWallet) {
-            if(s.startsWith("TAG_DING")){
+            if (s.startsWith("TAG_DING")) {
                 list.add(s);
             }
         }
-        if(list.size() > 3) {
+        if (list.size() > 3) {
             havedGetReadWallet.removeAll(list);
         }
 
-        if(havedGetReadWallet.size() > 30){
+        if (havedGetReadWallet.size() > 30) {
             havedGetReadWallet.clear();
         }
     }
@@ -217,6 +222,11 @@ public class QQWalletAccessibility {
     public void recycle(AccessibilityNodeInfo info) {
         if (info == null) return;
         List<AccessibilityNodeInfo> qqRed = info.findAccessibilityNodeInfosByText("QQ红包");
+        //领取自己的红包
+        List<AccessibilityNodeInfo> qqMyRed = info.findAccessibilityNodeInfosByText("查看详情");
+        if (qqRed != null && qqMyRed != null) {
+            qqRed.addAll(qqMyRed);
+        }
         if (qqRed != null && qqRed.size() > 0) {
             for (AccessibilityNodeInfo accessibilityNodeInfo : qqRed) {
                 if (accessibilityNodeInfo.isClickable()) {

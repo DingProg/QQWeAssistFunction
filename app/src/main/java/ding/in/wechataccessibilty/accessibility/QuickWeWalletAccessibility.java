@@ -9,8 +9,6 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import ding.in.wechataccessibilty.App;
@@ -24,24 +22,22 @@ import static android.accessibilityservice.AccessibilityService.GLOBAL_ACTION_BA
  * @author dingdegao
  *         create by 2016/1/17.
  */
-public class WeWalletAccessibility {
+public class QuickWeWalletAccessibility {
 
     boolean hasAction = false;
     AccessibilityService baseAccessibilityService;
-    private List<AccessibilityNodeInfo> redWillClick;
-    private List<String> havedGetReadWallet;
-    private List<String> doubleCheckHash;
 
-    private AccessibilityNodeInfo tempAccessInfo = null;
-    private String tempStr = null;
     private boolean notifyRed = false;
+    private String content;//内容
+    private String time;//发红包的时间
+    private String sender;//发红包的人
+    int hashCode = 0;//发红包时的hashCode
 
-    public WeWalletAccessibility(AccessibilityService baseAccessibilityService) {
+
+
+    public QuickWeWalletAccessibility(AccessibilityService baseAccessibilityService) {
         this.baseAccessibilityService = baseAccessibilityService;
-        redWillClick = new ArrayList<>();
-        havedGetReadWallet = new ArrayList<>();
-        doubleCheckHash = new ArrayList<>();
-    }
+      }
 
     public void onAccessibilityEvent(final AccessibilityEvent event) {
         if (!App.weRead) return;
@@ -63,9 +59,9 @@ public class WeWalletAccessibility {
         }
         //提高抢红包的准确度
         String className = event.getClassName().toString();
-        if (className.equals("com.tencent.mm.ui.LauncherUI") || className.equals("com.tencent.mm.ui.ChattingUI")) {
-            // getLastPacket();
-        }
+//        if (className.equals("com.tencent.mm.ui.LauncherUI") || eventType == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) {
+//            // getLastPacket();
+//        }
         if (className.equals("com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyReceiveUI")) {
             //开红包
             LogUtils.i("com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyReceiveUI 打开");
@@ -73,13 +69,10 @@ public class WeWalletAccessibility {
         } else if (className.equals("com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyDetailUI")) {
             //退出红包
             LogUtils.i("com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyDetailUI 退出");
-            addHaveData();
             //抢一下个红包自动会打开，不用退出
             //pressBackButton();
         } else {
-            if (!hasAction) {
-                getLastPacket();
-            }
+            getLastPacket();
         }
 
     }
@@ -126,39 +119,21 @@ public class WeWalletAccessibility {
             hasAction = false;
             return;
         }
-        redWillClick.clear();
-        findRedPackage(rootNode);
-        if (redWillClick.size() > 0) {
-            if (notifyRed) {//如果是通知栏直接去点击最下面的一个
-                AccessibilityNodeInfo info = redWillClick.get(redWillClick.size() - 1);
-                haveSameRedMsg(info);
-                performViewClick(info);
-                notifyRed = false;
-                hasAction = false;
-                return;
-            }
+        AccessibilityNodeInfo redPackage = findRedPackage(rootNode);
+        if (redPackage == null) {
+            hasAction = false;
+            return;
+        }
+        if (notifyRed) {//如果是通知栏直接去点击最下面的一个
+            performViewClick(redPackage);
+            notifyRed = false;
+            hasAction = false;
+            return;
+        }
 
-            AccessibilityNodeInfo redInfo = null;
-            //去查找那个需要抢的红包
-            for (int i = redWillClick.size() - 1; i >= 0; i--) {
-                AccessibilityNodeInfo accessibilityNodeInfo = redWillClick.get(i);
-                if (!doubleCheckHash.contains(Integer.toHexString(accessibilityNodeInfo.hashCode()))) {
-                    redInfo = accessibilityNodeInfo;
-                    break;
-                }
-            }
-
-            // 更换策略 每次只去抢一个红包
-            if (redInfo != null) {
-                if (haveSameRedMsg(redInfo)) {
-                    performViewClick(redInfo);
-                }
-            } else {
-                redInfo = redWillClick.get(redWillClick.size() - 1);
-                if (haveSameRedMsg(redInfo)) {
-                    performViewClick(redInfo);
-                }
-            }
+        // 更换策略 每次只去抢一个红包
+        if (!haveSameRedMsg(redPackage)) {
+            performViewClick(redPackage);
         }
         hasAction = false;
     }
@@ -171,47 +146,70 @@ public class WeWalletAccessibility {
      * @return false 不是
      */
     public boolean haveSameRedMsg(AccessibilityNodeInfo info) {
-        String content = null;//内容
-        String time = null;//时间
-        String sender = null;//发红包的人
-
-        StringBuilder stringBuilder = new StringBuilder();
+        //内容
+        String tContent = null;
+        //时间
+        String tTime = null;
+        //发红包的人
+        String tSender = null;
         if (info.getChild(0) != null && info.getChild(0).getText() != null) {
-            content = info.getChild(0).getText().toString();
+            tContent = info.getChild(0).getText().toString();
         }
         AccessibilityNodeInfo node = info.getParent();
         if (node == null) return false;
         int count = node.getChildCount();
         for (int i = 0; i < count; i++) {
             AccessibilityNodeInfo thisNode = node.getChild(i);
-            if ("android.widget.ImageView".equals(thisNode.getClassName()) && sender == null) {
+            if ("android.widget.ImageView".equals(thisNode.getClassName()) && tSender == null) {
                 CharSequence contentDescription = thisNode.getContentDescription();
                 if (contentDescription != null)
-                    sender = contentDescription.toString().replaceAll("头像$", "");
-            } else if ("android.widget.TextView".equals(thisNode.getClassName()) && time == null) {
+                    tSender = contentDescription.toString().replaceAll("头像$", "");
+            } else if ("android.widget.TextView".equals(thisNode.getClassName()) && tTime == null) {
                 CharSequence thisNodeText = thisNode.getText();
-                if (thisNodeText != null) time = thisNodeText.toString();
+                if (thisNodeText != null) tTime = thisNodeText.toString();
             }
         }
-        stringBuilder.append(time)
+
+        StringBuilder stringBuilder = new StringBuilder();
+        String str = stringBuilder.append(tTime)
                 .append("|")
-                .append(sender)
+                .append(tSender)
                 .append("|")
-                .append(content)
-                .append("|");
-        if (redWillClick.get(0) != null) {
-            stringBuilder.append(Integer.toHexString(redWillClick.get(0).hashCode()));
-        }
-        String str = stringBuilder.toString();
+                .append(tContent)
+                .append("|")
+                .append(info.hashCode())
+                .toString();
         LogUtils.i("微信红包获取msg:" + str);
-        if (!havedGetReadWallet.contains(str)) {
-//            havedGetReadWallet.add(str);
-//            doubleCheckHash.add(info.hashCode());
-            tempStr = str;
-            tempAccessInfo = info;
+        return equalsByMsg(info, tContent, tTime, tSender);
+    }
+
+    private boolean equalsByMsg(AccessibilityNodeInfo info, String tContent, String tTime, String tSender) {
+        if (info.hashCode() == hashCode && strEquesls(tContent, content)
+                && strEquesls(tTime, time)
+                && strEquesls(tSender, sender)) {
             return true;
+        } else {
+            hashCode = info.hashCode();
+            content = tContent;
+            time = tTime;
+            sender = tSender;
+            return false;
         }
-        return false;
+    }
+
+    /**
+     * 有可能有null 所以重写String的 equals
+     *
+     * @param str1
+     * @param str2
+     * @return
+     */
+    private boolean strEquesls(String str1, String str2) {
+        if (str1 != null && str2 != null) {
+            return str1.equals(str2);
+        } else {
+            return str1 == str2;
+        }
     }
 
     /**
@@ -219,10 +217,12 @@ public class WeWalletAccessibility {
      *
      * @param info
      */
-    public void findRedPackage(AccessibilityNodeInfo info) {
-        if (info == null) return;
+    public AccessibilityNodeInfo findRedPackage(AccessibilityNodeInfo info) {
+        if (info == null) return null;
         List<AccessibilityNodeInfo> nodes;
+        AccessibilityNodeInfo lastAccessbility = null;
         Rect bounds = new Rect();
+        int bottom = 0;
         String texts[] = new String[]{"查看红包", "领取红包"};
         for (String text : texts) {
             nodes = info.findAccessibilityNodeInfosByText(text);
@@ -232,33 +232,15 @@ public class WeWalletAccessibility {
                     //过滤不是红包的消息
                     if (parent != null && parent.getClassName().toString().equals("android.widget.LinearLayout")) {
                         parent.getBoundsInScreen(bounds);
-                        //确定是在屏幕内bounds.top > 0  &&
-                        if (!redWillClick.contains(parent)) {
-                            redWillClick.add(parent);
+                        if (bounds.bottom > bottom) {
+                            bottom = bounds.bottom;
+                            lastAccessbility = parent;
                         }
                     }
                 }
             }
         }
-        sortRedWillClickByBotoom();
-    }
-
-    /**
-     * 对红包进行排序
-     */
-    private void sortRedWillClickByBotoom() {
-        if (redWillClick.size() == 0) return;
-        Collections.sort(redWillClick, new Comparator<AccessibilityNodeInfo>() {
-            Rect bounds1 = new Rect();
-            Rect bounds2 = new Rect();
-
-            @Override
-            public int compare(AccessibilityNodeInfo o1, AccessibilityNodeInfo o2) {
-                o1.getBoundsInScreen(bounds1);
-                o2.getBoundsInScreen(bounds2);
-                return bounds1.bottom - bounds2.bottom;
-            }
-        });
+        return lastAccessbility;
     }
 
     /**
@@ -268,42 +250,12 @@ public class WeWalletAccessibility {
         AccessibilityNodeInfo rootInActiveWindow = baseAccessibilityService.getRootInActiveWindow();
         if (rootInActiveWindow == null) return;
         AccessibilityNodeInfo openButton = findOpenButton(rootInActiveWindow);
-        //添加已经抢过的红包
-        addHaveData();
-        //清楚数据
-        clearHaveRedList();
         if (openButton != null && "android.widget.Button".equals(openButton.getClassName().toString())) {
             performViewClick(openButton);
             LogUtils.i("点击打开红包的开");
         } else {
             LogUtils.i("执行退出");
             pressBackButton();
-        }
-    }
-
-    private void clearHaveRedList() {
-        //采用先进先出策略
-        if (doubleCheckHash.size() > 5) {
-            doubleCheckHash.remove(0);
-        }
-
-        //抢到7个红包，开始清理,移除最开始抢到的第一个红包
-        if (havedGetReadWallet.size() > 6) {
-            havedGetReadWallet.remove(0);
-        }
-    }
-
-    /**
-     * 添加已经抢过红包的标识
-     */
-    private void addHaveData() {
-        if (tempAccessInfo != null && !doubleCheckHash.contains(Integer.toHexString(tempAccessInfo.hashCode()))) {
-            doubleCheckHash.add(Integer.toHexString(tempAccessInfo.hashCode()));
-            tempAccessInfo = null;
-        }
-        if (tempStr != null && !havedGetReadWallet.contains(tempStr)) {
-            havedGetReadWallet.add(tempStr);
-            tempStr = null;
         }
     }
 
